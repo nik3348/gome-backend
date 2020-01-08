@@ -66,8 +66,8 @@ func GetData() string{
 			} else {
 				value = string(col)
 			}
-			fmt.Print(columns[i], ": ", value)
-			result.WriteString(columns[i] + ": " + value)
+			fmt.Print(columns[i], ": ", value + ", ")
+			result.WriteString(columns[i] + ": " + value + ", ")
 		}
 		fmt.Println("\n-----------------------------------")
 		
