@@ -9,19 +9,21 @@ import (
 	"github.com/labstack/echo"
 )
 import (
-	"tools"
+	"kdn.tech/GoMe/tools"
 )
 
+//User Struct
 type User struct {
 	Name  string `json:"name" xml:"name" form:"name" query:"name"`
 	Email string `json:"email" xml:"email" form:"email" query:"email"`
 }
-var a [] User
+
+var a []User
 
 func main() {
 	e := echo.New()
 
-	getData
+	tools.GetData()
 
 	e.GET("/", helloWorld)
 	e.POST("/users", createUser)
@@ -35,7 +37,7 @@ func main() {
 func displayUsers(c echo.Context) error {
 	var result strings.Builder
 
-	for _,part := range a {
+	for _, part := range a {
 		result.WriteString(part.Name + " " + part.Email + "\n")
 	}
 	return c.String(http.StatusOK, result.String())
@@ -53,6 +55,7 @@ func createUser(c echo.Context) error {
 		return err
 	}
 	a = append(a, User{u.Name, u.Email})
+
 	return c.JSON(http.StatusCreated, u)
 	// or
 	// return c.XML(http.StatusCreated, u)
