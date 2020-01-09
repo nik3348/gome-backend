@@ -11,11 +11,12 @@ import (
 const (
 	USER     string = "root"
 	PASSWORD string = "root"
+	PROTOCOL string = "tcp"
 	HOST     string = "localhost"
 	PORT     string = "3306"
 )
 
-var dataSourceName string = USER + ":" + PASSWORD + "@/gome"
+var dataSourceName = USER + ":" + PASSWORD + "@" + PROTOCOL + "(" + HOST + ":" + PORT + ")/gome"
 
 func GetData() string{
 	db, err := sql.Open("mysql", dataSourceName)

@@ -20,13 +20,14 @@ var a []User
 func main() {
 	e := echo.New()
 
+	tools.GetData()
+
 	e.GET("/", helloWorld)
 	e.POST("/users", createUser)
 	e.GET("/users/:id", getUser)
 	e.GET("/users/all", displayUsers)
 	e.GET("/show", show)
 	e.Logger.Fatal(e.Start(":1323"))
-	tools.GetData()
 }
 
 // e.get("/users/all", displayUsers)
