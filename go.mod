@@ -1,4 +1,4 @@
-module kdn.tech/GoMe
+module GoMe
 
 go 1.13
 

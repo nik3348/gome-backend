@@ -1,9 +1,9 @@
 package main
 
 import (
+	"GoMe/tools"
 	"github.com/labstack/echo/v4"
 	"io"
-	"kdn.tech/GoMe/tools"
 	"net/http"
 	"os"
 	"strings"
