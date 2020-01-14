@@ -14,19 +14,19 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-// @title Swagger Example API
+// @title GoMe
 // @version 1.0
-// @description This is a sample server CRUD App.
+// @description This is a sample Backend CRUD App using Golang.
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
+// @contact.url https://voidstack.xyz
+// @contact.email nik3348@gmail.com
 
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @license.name MIT License
+// @license.url https://opensource.org/licenses/MIT
 
-// @host gome.swagger.io
+// @host localhost:1323
 // @BasePath /api
 func main() {
 	e := echo.New()
