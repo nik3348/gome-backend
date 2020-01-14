@@ -1,14 +1,20 @@
-package tools
+package db
 
 import (
+	"GoMe/conf"
 	"database/sql"
 	"fmt"
+	"strings"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
-func getData() {
-	db, err := sql.Open("mysql", "root:root@/gome")
+var dataSourceName = conf.USER + ":" + conf.PASSWORD + "@" + conf.PROTOCOL + "(" + conf.HOST + ":" + conf.PORT + ")/gome"
+
+func GetData() string {
+	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
-		panic(err.Error())  // Just for example purpose. You should use proper error handling instead of panic
+		panic(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
 	}
 	defer db.Close()
 
@@ -36,6 +42,7 @@ func getData() {
 	}
 
 	// Fetch rows
+	var result strings.Builder
 	for rows.Next() {
 		// get RawBytes from data
 		err = rows.Scan(scanArgs...)
@@ -53,11 +60,14 @@ func getData() {
 			} else {
 				value = string(col)
 			}
-			fmt.Println(columns[i], ": ", value)
+			fmt.Print(columns[i], ": ", value+", ")
+			result.WriteString(columns[i] + ": " + value + ", ")
 		}
-		fmt.Println("-----------------------------------")
+		fmt.Println("\n-----------------------------------")
+
 	}
 	if err = rows.Err(); err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
+	return result.String()
 }

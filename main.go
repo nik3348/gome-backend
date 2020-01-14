@@ -1,28 +1,39 @@
 package main
 
 import (
+	"GoMe/db"
+	"GoMe/model"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/labstack/echo"
-)
-import (
-	"tools"
+	_ "GoMe/docs"
+
+	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-type User struct {
-	Name  string `json:"name" xml:"name" form:"name" query:"name"`
-	Email string `json:"email" xml:"email" form:"email" query:"email"`
-}
-var a [] User
+// @title Swagger Example API
+// @version 1.0
+// @description This is a sample server CRUD App.
+// @termsOfService http://swagger.io/terms/
 
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host gome.swagger.io
+// @BasePath /api
 func main() {
 	e := echo.New()
 
-	getData
+	db.GetData()
 
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/", helloWorld)
 	e.POST("/users", createUser)
 	e.GET("/users/:id", getUser)
@@ -31,11 +42,13 @@ func main() {
 	e.Logger.Fatal(e.Start(":1323"))
 }
 
+var a []model.User
+
 // e.get("/users/all", displayUsers)
 func displayUsers(c echo.Context) error {
 	var result strings.Builder
 
-	for _,part := range a {
+	for _, part := range a {
 		result.WriteString(part.Name + " " + part.Email + "\n")
 	}
 	return c.String(http.StatusOK, result.String())
@@ -48,11 +61,12 @@ func helloWorld(c echo.Context) error {
 
 // e.POST("/users", createUser)
 func createUser(c echo.Context) error {
-	u := new(User)
+	u := new(model.User)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	a = append(a, User{u.Name, u.Email})
+	a = append(a, *u)
+
 	return c.JSON(http.StatusCreated, u)
 	// or
 	// return c.XML(http.StatusCreated, u)
