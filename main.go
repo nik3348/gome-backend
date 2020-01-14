@@ -1,27 +1,39 @@
 package main
 
 import (
-	"GoMe/tools"
-	"github.com/labstack/echo/v4"
+	"GoMe/db"
+	"GoMe/model"
 	"io"
 	"net/http"
 	"os"
 	"strings"
+
+	_ "GoMe/docs"
+
+	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-//User Struct
-type User struct {
-	Name  string `json:"name" xml:"name" form:"name" query:"name"`
-	Email string `json:"email" xml:"email" form:"email" query:"email"`
-}
+// @title Swagger Example API
+// @version 1.0
+// @description This is a sample server CRUD App.
+// @termsOfService http://swagger.io/terms/
 
-var a []User
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
 
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host gome.swagger.io
+// @BasePath /api
 func main() {
 	e := echo.New()
 
-	tools.GetData()
+	db.GetData()
 
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/", helloWorld)
 	e.POST("/users", createUser)
 	e.GET("/users/:id", getUser)
@@ -29,6 +41,8 @@ func main() {
 	e.GET("/show", show)
 	e.Logger.Fatal(e.Start(":1323"))
 }
+
+var a []model.User
 
 // e.get("/users/all", displayUsers)
 func displayUsers(c echo.Context) error {
@@ -47,11 +61,11 @@ func helloWorld(c echo.Context) error {
 
 // e.POST("/users", createUser)
 func createUser(c echo.Context) error {
-	u := new(User)
+	u := new(model.User)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	a = append(a, User{u.Name, u.Email})
+	a = append(a, *u)
 
 	return c.JSON(http.StatusCreated, u)
 	// or
