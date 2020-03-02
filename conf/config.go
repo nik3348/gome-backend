@@ -7,4 +7,5 @@ const (
 	PROTOCOL string = "tcp"
 	HOST     string = "localhost"
 	PORT     string = "3306"
+	DATABASE string = "gome"
 )
