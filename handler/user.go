@@ -71,12 +71,7 @@ func GetUsers(c echo.Context) error {
 
 // e.get("/users/all", displayUsers)
 func DisplayUsers(c echo.Context) error {
-	var result strings.Builder
-
-	for _, part := range a {
-		result.WriteString(part.Name + " " + part.Email + "\n")
-	}
-	return c.String(http.StatusOK, result.String())
+	return c.JSON(http.StatusOK, a)
 }
 
 // e.POST("/users", createUser)

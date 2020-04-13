@@ -31,6 +31,7 @@ func main() {
 	e := echo.New()
 	e.Debug = true
 	e.Use(middleware.Logger())
+	e.Use(middleware.CORS())
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	_, err := model.DBConn()
