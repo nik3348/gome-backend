@@ -4,12 +4,10 @@ import (
 	"GoMe/model"
 	"database/sql"
 	"fmt"
+	"github.com/labstack/echo/v4"
 	"io"
 	"net/http"
 	"os"
-	"strings"
-
-	"github.com/labstack/echo/v4"
 )
 
 var a []model.User
@@ -20,6 +18,11 @@ func GetUsers(c echo.Context) error {
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
+
+	// Returning array of objects
+	// Create one object to and rewrite every time
+	var a []model.User
+	u := new(model.User)
 
 	// Get column names
 	columns, err := rows.Columns()
@@ -39,8 +42,8 @@ func GetUsers(c echo.Context) error {
 	}
 
 	// Fetch rows
-	var result strings.Builder
 	for rows.Next() {
+		// Backend logs area
 		// get RawBytes from data
 		err = rows.Scan(scanArgs...)
 		if err != nil {
@@ -57,16 +60,23 @@ func GetUsers(c echo.Context) error {
 			} else {
 				value = string(col)
 			}
-			fmt.Print(columns[i], ": ", value+", ")
-			result.WriteString(columns[i] + ": " + value + ", ")
+			fmt.Print(columns[i], ":", value, "\t")
 		}
-		fmt.Println("\n-----------------------------------")
+		fmt.Println()
 
+		// Output area
+		// Adding to array
+		err = rows.Scan(&u.UserId, &u.Name, &u.Email)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+		a = append(a, *u)
 	}
+
 	if err = rows.Err(); err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	return c.JSON(http.StatusOK, result.String())
+	return c.JSON(http.StatusOK, a)
 }
 
 // e.get("/users/all", displayUsers)
