@@ -2,7 +2,6 @@ package handler
 
 import (
 	"GoMe/model"
-	"database/sql"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"io"
@@ -13,69 +12,28 @@ import (
 var a []model.User
 
 func GetUsers(c echo.Context) error {
+	// Create one entity to and rewrite every time
+	var a []model.User
+	u := new(model.User)
+
 	// Execute the query
 	rows, err := model.DB.Query("SELECT * FROM users")
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
-	// Returning array of objects
-	// Create one object to and rewrite every time
-	var a []model.User
-	u := new(model.User)
-
-	// Get column names
-	columns, err := rows.Columns()
-	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
-
-	// Make a slice for the values
-	values := make([]sql.RawBytes, len(columns))
-
-	// rows.Scan wants '[]interface{}' as an argument, so we must copy the
-	// references into such a slice
-	// See http://code.google.com/p/go-wiki/wiki/InterfaceSlice for details
-	scanArgs := make([]interface{}, len(values))
-	for i := range values {
-		scanArgs[i] = &values[i]
-	}
-
 	// Fetch rows
 	for rows.Next() {
-		// Backend logs area
-		// get RawBytes from data
-		err = rows.Scan(scanArgs...)
-		if err != nil {
-			panic(err.Error()) // proper error handling instead of panic in your app
-		}
-
-		// Now do something with the data.
-		// Here we just print each column as a string.
-		var value string
-		for i, col := range values {
-			// Here we can check if the value is nil (NULL value)
-			if col == nil {
-				value = "NULL"
-			} else {
-				value = string(col)
-			}
-			fmt.Print(columns[i], ":", value, "\t")
-		}
-		fmt.Println()
-
 		// Output area
 		// Adding to array
-		err = rows.Scan(&u.UserId, &u.Name, &u.Email)
+		err = rows.Scan(&u.UserId, &u.Name, &u.Email, &u.CourseId)
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
 		a = append(a, *u)
+		fmt.Println("UserId:", u.UserId, " Name:", u.Name, " Email:", u.Email.String, " CourseId:", u.CourseId.String)
 	}
 
-	if err = rows.Err(); err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
-	}
 	return c.JSON(http.StatusOK, a)
 }
 
@@ -91,6 +49,17 @@ func CreateUser(c echo.Context) error {
 		return err
 	}
 	a = append(a, *u)
+
+	stmtIns, err := model.DB.Prepare("INSERT INTO users(name) VALUES(?)") // ? = placeholder
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	defer stmtIns.Close() // Close the statement when we leave main() / the program terminates
+
+	_, err = stmtIns.Exec(u.Name) // Insert tuples (i, i^2)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
 
 	return c.JSON(http.StatusCreated, u)
 }

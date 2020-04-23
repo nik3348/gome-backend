@@ -1,8 +1,9 @@
 create table users
 (
-	uid int not null
-		primary key,
-	name varchar(255) null,
-	email varchar(255) null
+	uid int unsigned auto_increment,
+	name varchar(255) not null,
+	email varchar(255) null,
+	cid int unsigned,
+    primary key (uid),
+    foreign key (cid) references courses(cid)
 );
-
