@@ -9,9 +9,7 @@ import (
 	"os"
 )
 
-var a []model.User
-
-func GetUsers(c echo.Context) error {
+func GetAllUsers(c echo.Context) error {
 	// Create one entity to and rewrite every time
 	var a []model.User
 	u := new(model.User)
@@ -37,18 +35,12 @@ func GetUsers(c echo.Context) error {
 	return c.JSON(http.StatusOK, a)
 }
 
-// e.get("/users/all", displayUsers)
-func DisplayUsers(c echo.Context) error {
-	return c.JSON(http.StatusOK, a)
-}
-
 // e.POST("/users", createUser)
 func CreateUser(c echo.Context) error {
 	u := new(model.User)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	a = append(a, *u)
 
 	stmtIns, err := model.DB.Prepare("INSERT INTO users(name) VALUES(?)") // ? = placeholder
 	if err != nil {
@@ -65,15 +57,18 @@ func CreateUser(c echo.Context) error {
 }
 
 // e.GET("/users/:id", getUser)
-func GetUser(c echo.Context) error {
+func GetUserById(c echo.Context) error {
 	// User ID from path `users/:id`
 	id := c.Param("id")
-	for x := 0; x < len(a); x++ {
-		if id == a[x].Name {
-			return c.String(http.StatusOK, id)
-		}
+	u := new(model.User)
+
+	// Execute the query
+	err := model.DB.QueryRow("SELECT * FROM users WHERE uid ="+id).Scan(&u.UserId, &u.Name, &u.Email, &u.CourseId)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, "User not found")
 	}
-	return c.String(http.StatusNotFound, "User not found")
+
+	return c.JSON(http.StatusOK, u)
 }
 
 func SaveAvatar(c echo.Context) error {
