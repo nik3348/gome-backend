@@ -9,3 +9,8 @@ const (
 	PORT     string = "3306"
 	DATABASE string = "gome"
 )
+
+const (
+	UsersSQL   string = "./db/000-users.sql"
+	CoursesSQL string = "./db/001-courses.sql"
+)

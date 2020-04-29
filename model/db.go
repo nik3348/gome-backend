@@ -3,8 +3,11 @@ package model
 import (
 	"GoMe/conf"
 	"database/sql"
-
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"io/ioutil"
+	"log"
+	"strings"
 )
 
 var DB *sql.DB
@@ -22,4 +25,26 @@ func DBConn() (*sql.DB, error) {
 	DB = dbConn
 
 	return dbConn, nil
+}
+
+func InitData() {
+	loadSQL(conf.CoursesSQL)
+	loadSQL(conf.UsersSQL)
+}
+
+func loadSQL(file string) {
+	data, err := ioutil.ReadFile(file) // Reading SQL file
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	queries := strings.Split(string(data), ";\r\n")
+	for i := 0; i < len(queries)-1; i++ {
+		_, err := DB.Query(queries[i])
+		fmt.Print(i)
+		fmt.Println(":" + queries[i] + "\n")
+		if err != nil {
+			panic(err.Error())
+		}
+	}
 }

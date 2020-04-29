@@ -35,6 +35,7 @@ func main() {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	_, err := model.DBConn()
+	model.InitData()
 	if err != nil {
 		panic(err.Error())
 	}
