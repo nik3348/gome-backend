@@ -1,4 +1,3 @@
-drop table if exists courses;
 create table courses
 (
     cid int unsigned auto_increment,

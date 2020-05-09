@@ -11,6 +11,7 @@ const (
 )
 
 const (
-	UsersSQL   string = "./db/000-users.sql"
+	Init       string = "./db/000-init.sql"
 	CoursesSQL string = "./db/001-courses.sql"
+	UsersSQL   string = "./db/002-users.sql"
 )

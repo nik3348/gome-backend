@@ -29,6 +29,7 @@ func DBConn() (*sql.DB, error) {
 
 // TODO: Only works if database isn't there
 func InitData() {
+	loadSQL(conf.Init)
 	loadSQL(conf.CoursesSQL)
 	loadSQL(conf.UsersSQL)
 }
