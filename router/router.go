@@ -10,9 +10,9 @@ func Init(e *echo.Echo) {
 
 	api := e.Group("/api/users")
 	{
-		api.GET("", handler.GetAllUsers)
-		api.POST("", handler.CreateUser)
-		api.POST("/avatar", handler.SaveAvatar)
+		api.GET("", handler.GetUsers)
 		api.GET("/:id", handler.GetUserById)
+		api.POST("", handler.PostUser)
+		api.POST("/avatar", handler.SaveAvatar)
 	}
 }

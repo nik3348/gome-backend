@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func GetAllUsers(c echo.Context) error {
+func GetUsers(c echo.Context) error {
 	// Create one entity to and rewrite every time
 	var a []model.User
 	u := new(model.User)
@@ -36,7 +36,7 @@ func GetAllUsers(c echo.Context) error {
 }
 
 // e.POST("/users", createUser)
-func CreateUser(c echo.Context) error {
+func PostUser(c echo.Context) error {
 	u := new(model.User)
 	if err := c.Bind(u); err != nil {
 		return err
