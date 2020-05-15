@@ -1,6 +1,5 @@
 package conf
 
-//Const
 const (
 	USER     string = "root"
 	PASSWORD string = "root"

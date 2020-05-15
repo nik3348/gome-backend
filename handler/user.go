@@ -46,7 +46,12 @@ func PostUser(c echo.Context) error {
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
-	defer stmtIns.Close() // Close the statement when we leave main() / the program terminates
+	defer func() {
+		err := stmtIns.Close() // Close the statement when we leave main() / the program terminates
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+	}()
 
 	_, err = stmtIns.Exec(u.Name) // Insert tuples (i, i^2)
 	if err != nil {
@@ -85,14 +90,24 @@ func SaveAvatar(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	defer src.Close()
+	defer func() {
+		err := src.Close()
+		if err != nil {
+			panic(err.Error())
+		}
+	}()
 
 	// Destination
 	dst, err := os.Create(avatar.Filename)
 	if err != nil {
 		return err
 	}
-	defer dst.Close()
+	defer func() {
+		err := dst.Close()
+		if err != nil {
+			panic(err.Error())
+		}
+	}()
 
 	// Copy
 	if _, err = io.Copy(dst, src); err != nil {
