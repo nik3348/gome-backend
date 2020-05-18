@@ -3,6 +3,10 @@ package main
 import (
 	"GoMe/model"
 	"GoMe/router"
+	"context"
+	"os"
+	"os/signal"
+	"time"
 
 	echoSwagger "github.com/swaggo/echo-swagger"
 
@@ -32,6 +36,7 @@ func main() {
 	e.Debug = true
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
+	e.Use(middleware.Secure())
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	_, err := model.DBConn()
@@ -41,5 +46,26 @@ func main() {
 	}
 
 	router.Init(e)
-	e.Logger.Fatal(e.Start(":1323"))
+
+	// Start server
+	go func() {
+		if err := e.Start(":1323"); err != nil {
+			e.Logger.Fatal(err)
+			e.Logger.Info("shutting down the server")
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with
+	// a timeout of 10 seconds.
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
 }
+
+// TODO: Basic Auth/JWT
+// TODO: Http/2
