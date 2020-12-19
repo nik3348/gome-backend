@@ -1,4 +1,3 @@
-drop table if exists users;
 create table users
 (
 	uid int unsigned auto_increment,
